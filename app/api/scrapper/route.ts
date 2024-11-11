@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
-import { writeFileSync } from "fs";
+// import { writeFileSync } from "fs";
 import path from "path";
+import AdmZip from "adm-zip";
 
 type Link = {
   url: string;
@@ -23,6 +24,7 @@ export async function GET() {
     const ext = re.exec($(value).text());
 
     if (!ext && !Array.isArray(ext)) return;
+    if (!ext[1]) return;
 
     links.push({
       url: url + $(value).attr("href"),
@@ -31,23 +33,24 @@ export async function GET() {
     });
   });
 
-  for (let i = 0; i < 10; i++) {
+  const zip = new AdmZip();
+
+  for (let i = 0; i < 20; i++) {
     const item = links[i];
     await fetch(item.url)
       .then((res) => res.arrayBuffer())
       .then((arrayBuffer) => Buffer.from(arrayBuffer))
       .then((buffer) => {
-        console.log(`${i}: writing ${item.name}...`);
-        writeFileSync(
-          path.join(process.cwd(), "public/assets/" + item.name),
-          buffer
-        );
-        return console.log(`done ${item.name}`);
+        console.log(`${i}: adding ${item.name} to zip...`);
+        zip.addFile(item.name, buffer, item.name);
+        return console.log(`${item.name} added to zip`);
       })
       .catch((err) => {
         console.log(err);
       });
   }
+
+  // zip.writeZip(path.join(process.cwd(), "public/assets/sounds.zip"));
 
   console.log("DONE!!!");
 
