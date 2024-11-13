@@ -35,7 +35,7 @@ export async function GET() {
 
   const zip = new AdmZip();
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 10; i++) {
     const item = links[i];
     await fetch(item.url)
       .then((res) => res.arrayBuffer())
@@ -51,8 +51,17 @@ export async function GET() {
   }
 
   // zip.writeZip(path.join(process.cwd(), "public/assets/sounds.zip"));
+  const willSendthis = zip.toBuffer();
+
+  console.log(willSendthis);
 
   console.log("DONE!!!");
 
-  return Response.json({ message: "Thank you for using web scrapper." });
+  return new Response(willSendthis, {
+    status: 200,
+    headers: {
+      "content-disposition": `attachment; filename=sounds.zip`,
+      "Content-Type": "application/zip",
+    },
+  });
 }
