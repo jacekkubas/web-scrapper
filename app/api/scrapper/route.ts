@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 // import { writeFileSync } from "fs";
-import path from "path";
+// import path from "path";
 import AdmZip from "adm-zip";
 
 type Link = {
@@ -10,8 +10,12 @@ type Link = {
   ext: string;
 };
 
-export async function GET() {
-  const url = "https://play.pokemonshowdown.com/audio/cries/";
+export async function POST(request: Request) {
+  const reqData = await request.json();
+
+  // const url = "https://play.pokemonshowdown.com/audio/cries/";
+  const url = reqData.url;
+  const extensionsToDownload = reqData.media;
   const response = await fetch(url);
   const re = /(?:\.([^.]+))?$/;
 
@@ -26,16 +30,22 @@ export async function GET() {
     if (!ext && !Array.isArray(ext)) return;
     if (!ext[1]) return;
 
-    links.push({
-      url: url + $(value).attr("href"),
-      name: $(value).text(),
-      ext: ext[1],
-    });
+    if (extensionsToDownload.includes(ext[1])) {
+      links.push({
+        url: url + $(value).attr("href"),
+        name: $(value).text(),
+        ext: ext[1],
+      });
+    }
   });
 
   const zip = new AdmZip();
 
-  for (let i = 0; i < 10; i++) {
+  if (links.length === 0) {
+    return Response.json({ message: "no links found" });
+  }
+
+  for (let i = 0; i < links.length; i++) {
     const item = links[i];
     await fetch(item.url)
       .then((res) => res.arrayBuffer())
@@ -53,15 +63,12 @@ export async function GET() {
   // zip.writeZip(path.join(process.cwd(), "public/assets/sounds.zip"));
   const willSendthis = zip.toBuffer();
 
-  console.log(willSendthis);
-
-  console.log("DONE!!!");
-
   return new Response(willSendthis, {
     status: 200,
     headers: {
       "content-disposition": `attachment; filename=sounds.zip`,
       "Content-Type": "application/zip",
+      "Content-Length": `${willSendthis.byteLength}`,
     },
   });
 }

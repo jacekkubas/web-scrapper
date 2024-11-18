@@ -1,0 +1,38 @@
+form {
+  width: 400px;
+  max-width: 100%;
+  font-size: 15px;
+}
+
+label {
+  display: block;
+}
+
+input {
+  display: block;
+  padding: 10px 15px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  border: solid 1px #ccc;
+}
+
+.error {
+  border-color: red;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  background-color: #ccc;
+  border: solid 1px #333;
+  display: block;
+  margin: 0 10px 0 0;
+}
+
+input:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 3px 2px lightblue;
+}
