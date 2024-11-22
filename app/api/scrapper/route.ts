@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
+import AdmZip from "adm-zip";
 // import { writeFileSync } from "fs";
 // import path from "path";
-import AdmZip from "adm-zip";
 
 type Link = {
   url: string;

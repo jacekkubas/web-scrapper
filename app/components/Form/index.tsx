@@ -1,14 +1,12 @@
 "use client";
 import { FormEvent, useState, useRef } from "react";
-import "./style.css";
 import { formatSizeUnits } from "./helpers";
 import { Media, Validation } from "@/types/types";
 import Formular from "./Formular";
+import "./style.css";
 
 const Form = () => {
-  const [url, setUrl] = useState(
-    "https://play.pokemonshowdown.com/audio/cries/"
-  );
+  const [url, setUrl] = useState("https://play.pokemonshowdown.com/audio/");
   const [media, setMedia] = useState<Media>({ mp3: true, ogg: false });
   const [size, setSize] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +17,28 @@ const Form = () => {
     return Object.keys(media)
       .map((el: string) => (media[el as keyof Media] ? el : false))
       .filter((el) => el);
+  };
+
+  const makeZipButton = (data: Blob) => {
+    if (!linkWrapperRef.current || !data) return;
+
+    const blobUrl = URL.createObjectURL(data);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = "file.zip";
+    link.text = "Download";
+    link.classList.add(
+      "bg-green-500",
+      "hover:bg-green-700",
+      "text-white",
+      "font-bold",
+      "py-2",
+      "px-4",
+      "rounded"
+    );
+    linkWrapperRef.current.append(link);
+
+    setSize(formatSizeUnits(data.size));
   };
 
   const getZip = () => {
@@ -38,25 +58,7 @@ const Form = () => {
     })
       .then((response) => response.blob())
       .then((data) => {
-        if (!linkWrapperRef.current || !data) return;
-
-        const blobUrl = URL.createObjectURL(data);
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.download = "file.zip";
-        link.text = "Download";
-        link.classList.add(
-          "bg-green-500",
-          "hover:bg-green-700",
-          "text-white",
-          "font-bold",
-          "py-2",
-          "px-4",
-          "rounded"
-        );
-        linkWrapperRef.current.append(link);
-
-        setSize(formatSizeUnits(data.size));
+        makeZipButton(data);
       })
       .catch((error) => console.error(error))
       .finally(() => {

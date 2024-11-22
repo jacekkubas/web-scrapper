@@ -18,10 +18,6 @@ input {
   border: solid 1px #ccc;
 }
 
-.error {
-  border-color: red;
-}
-
 input[type="checkbox"] {
   width: 16px;
   height: 16px;
@@ -35,4 +31,8 @@ input:focus {
   outline: none;
   border-color: transparent;
   box-shadow: 0 0 3px 2px lightblue;
+}
+
+.error {
+  border-color: red;
 }
