@@ -1,6 +1,6 @@
 My younger brother asked me if it's possible to download all the pokemon sound files from a page at once. So I made this tool for him. To use it provide URL and choos media type to download. It's not perfect but it does the job.
 
-Page hosted on Vercel
+Page hosted on Vercel https://bulk-downloader-beta.vercel.app/
 
 ## To run it locally
 
